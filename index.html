@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rec Image Editor - Official</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #f5f5f7;
+    --bg-panel: #ffffff;
+    --bg-card: #f2f2f7;
+    --bg-hover: #e5e5ea;
+    --accent-blue: #0071e3; /* Official Apple Blue */
+    --accent-gray: #8e8e93;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --border: #d2d2d7;
+    --danger: #ff3b30;
+    --success: #34c759;
+  }
+
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* OFFICIAL HEADER */
+  .header {
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-icon {
+    font-size: 20px;
+  }
+  .logo-text {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .logo-sub {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: 4px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* PREMIUM BUTTONS */
+  .btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+  }
+  .btn-ghost:hover, .btn-ghost:active { 
+    background: var(--bg-hover); 
+    color: var(--text-primary); 
+  }
+
+  .btn-primary {
+    background: var(--accent-blue);
+    color: white;
+  }
+  .btn-primary:hover, .btn-primary:active { background: #0062c4; }
+
+  .btn-download {
+    background: #e1f0ff;
+    color: var(--accent-blue);
+    font-weight: 600;
+  }
+  .btn-download:hover, .btn-download:active { background: #cbdfff; }
+
+  /* MAIN LAYOUT (MOBILE OPTIMIZED) */
+  .main {
+    display: flex;
+    flex-direction: column; /* Stacked for mobile */
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .main { flex-direction: row; }
+  }
+
+  /* CANVAS / WORKSPACE AREA */
+  .canvas-area {
+    flex: 1;
+    background: var(--bg-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 16px;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    background: white;
+    border-radius: 4px;
+  }
+
+  #mainCanvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .no-image-placeholder {
+    text-align: center;
+    pointer-events: none;
+  }
+  .placeholder-icon { 
+    font-size: 48px; 
+    margin-bottom: 12px; 
+    color: var(--accent-gray);
+  }
+  .placeholder-text {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .placeholder-sub { 
+    font-size: 12px; 
+    color: var(--text-secondary); 
+  }
+
+  .upload-drop-zone {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .upload-drop-zone.has-image { pointer-events: none; }
+
+  /* FLOATING CANVAS CONTROLS */
+  .canvas-controls {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 6px 16px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    z-index: 5;
+  }
+  .zoom-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .zoom-level { 
+    font-size: 12px; 
+    font-weight: 500;
+    color: var(--text-primary); 
+    min-width: 44px; 
+    text-align: center; 
+  }
+
+  /* HORIZONTAL SCROLLABLE TOOLBAR FOR MOBILE */
+  .left-toolbar {
+    width: 100%;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: row;
+    padding: 6px;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .left-toolbar::-webkit-scrollbar { display: none; } /* Hide bar */
+
+  @media (min-width: 768px) {
+    .left-toolbar {
+      width: 72px;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      border-top: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
+
+  .tool-btn {
+    padding: 6px 12px;
+    min-width: 60px;
+    height: 52px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    gap: 4px;
+  }
+  .tool-btn:active, .tool-btn.active {
+    background: var(--bg-card);
+    color: var(--accent-blue);
+  }
+  .tool-icon { font-size: 18px; }
+  .tool-label { font-size: 10px; font-weight: 500; }
+
+  .tool-divider {
+    width: 1px; height: 30px;
+    background: var(--border);
+    align-self: center;
+    margin: 0 4px;
+  }
+  @media (min-width: 768px) {
+    .tool-divider { width: 30px; height: 1px; margin: 6px 0; }
+  }
+
+  /* BOTTOM EDITING PANEL FOR MOBILE / RIGHT PANEL FOR PC */
+  .right-panel {
+    width: 100%;
+    height: 40vh; /* Takes bottom space on mobile */
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 768px) {
+    .right-panel {
+      width: 320px;
+      height: auto;
+      border-top: none;
+      border-left: 1px solid var(--border);
+    }
+  }
+
+  .panel-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-panel);
+    flex-shrink: 0;
+  }
+  .panel-tab {
+    flex: 1;
+    padding: 12px 4px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+  .panel-tab.active { 
+    color: var(--accent-blue); 
+    border-bottom-color: var(--accent-blue); 
+  }
+
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #ffffff;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    margin-top: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* FORM CONTROLS & SLIDERS */
+  .control-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .control-label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .control-value { font-size: 12px; font-weight: 600; color: var(--accent-blue); }
+
+  input[type="range"] {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-card);
+    border-radius: 2px;
+    outline: none;
+    margin-bottom: 16px;
+    -webkit-appearance: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+  }
+
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  input[type="text"]:focus, select:focus, textarea:focus {
+    background: #ffffff;
+    border-color: var(--accent-blue);
+  }
+
+  /* COLOR GRID */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .color-swatch {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%; /* Circle looks more premium */
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .color-swatch.selected { border: 2px solid var(--text-primary); transform: scale(1.1); }
+
+  .color-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  input[type="color"] {
+    width: 44px; height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  /* BUTTON GRIDS */
+  .action-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .action-btn {
+    padding: 10px;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .action-btn:active { background: var(--bg-hover); }
+  .action-btn.danger { color: var(--danger); }
+
+  /* TEXT STYLE ROW */
+  .text-style-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .text-style-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .text-style-btn.active { background: #e1f0ff; color: var(--accent-blue); }
+
+  /* TOGGLE SWITCH */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .toggle {
+    width: 46px; height: 26px;
+    background: var(--bg-hover);
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle.on { background: var(--success); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 22px; height: 22px;
+    background: white;
+    border-radius: 50%;
+    top: 2px; left: 2px;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 22px; }
+
+  /* NOTIFICATION */
+  .notif {
+    position: fixed;
+    top: 72px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(29, 29, 31, 0.9);
+    color: white;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .notif.show { opacity: 1; }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="notif" id="notif">✓ Action completed</div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🎨</div>
+    <div>
+      <span class="logo-text">Rec</span>
+      <span class="logo-sub">Studio</span>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="undoAction()">↩</button>
+    <button class="btn btn-ghost" onclick="redoAction()">↪</button>
+    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Open</button>
+    <button class="btn btn-download" onclick="downloadImage()">Save</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="left-toolbar">
+    <div class="tool-btn active" id="tool-select" onclick="setTool('select')">
+      <div class="tool-icon">↖</div>
+      <div class="tool-label">Select</div>
+    </div>
+    <div class="tool-btn" id="tool-crop" onclick="setTool('crop')">
+      <div class="tool-icon">⬜</div>
+      <div class="tool-label">Crop</div>
+    </div>
+    <div class="tool-btn" id="tool-draw" onclick="setTool('draw'); showTab('adjust')">
+      <div class="tool-icon">✏️</div>
+      <div class="tool-label">Draw</div>
+    </div>
+    <div class="tool-btn" id="tool-text" onclick="setTool('text'); showTab('text')">
+      <div class="tool-icon">T</div>
+      <div class="tool-label">Text</div>
+    </div>
+    <div class="tool-divider"></div>
+    <div class="tool-btn" id="tool-rotate" onclick="rotateImage()">
+      <div class="tool-icon">🔄</div>
+      <div class="tool-label">Rotate</div>
+    </div>
+    <div class="tool-btn" id="tool-flip" onclick="flipImage()">
+      <div class="tool-icon">↔</div>
+      <div class="tool-label">Flip</div>
+    </div>
+    <div class="tool-btn" id="tool-adjust" onclick="showTab('adjust')">
+      <div class="tool-icon">🎛️</div>
+      <div class="tool-label">Adjust</div>
+    </div>
+  </div>
+
+  <div class="canvas-area" id="canvasArea">
+    <div class="upload-drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="no-image-placeholder" id="placeholder">
+        <div class="placeholder-icon">📷</div>
+        <div class="placeholder-text">No Image Loaded</div>
+        <div class="placeholder-sub">Tap anywhere to import photo</div>
+      </div>
+    </div>
+    <div class="canvas-wrapper" id="canvasWrapper" style="display:none;">
+      <canvas id="mainCanvas"></canvas>
+    </div>
+    
+    <div class="canvas-controls">
+      <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+      <div class="zoom-level" id="zoomLevel">100%</div>
+      <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="panel-tabs">
+      <div class="panel-tab active" onclick="showTab('adjust')">Adjust</div>
+      <div class="panel-tab" onclick="showTab('text')">Text</div>
+      <div class="panel-tab" onclick="showTab('more')">More</div>
+    </div>
+
+    <div class="panel-content">
+
+      <div class="tab-pane active" id="tab-adjust">
+        <div class="section-title">Light & Color</div>
+        
+        <div class="control-row">
+          <span class="control-label">Brightness</span>
+          <span class="control-value" id="val-brightness">0</span>
+        </div>
+        <input type="range" id="slider-brightness" min="-100" max="100" value="0">
+
+        <div class="control-row">
+          <span class="control-label">Contrast</span>
+          <span class="control-value" id="val-contrast">0</span>
+        </div>
+        <input type="range" id="slider-contrast" min="-100" max="100" value="0">
+
+        <div class="control-row">
+          <span class="control-label">Saturation</span>
+          <span class="control-value" id="val-saturation">0</span>
+        </div>
+        <input type="range" id="slider-saturation" min="-100" max="100" value="0">
+
+        <div class="section-title">Transform Actions</div>
+        <div class="action-row">
+          <div class="action-btn" onclick="rotateImage()">↻ Rotate</div>
+          <div class="action-btn" onclick="flipImage()">↔ Flip H</div>
+          <div class="action-btn danger" onclick="resetAdjustments()">Reset All</div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-text">
+        <div class="section-title">Text Content</div>
+        <textarea id="textContent" rows="2" placeholder="Enter text..."></textarea>
+
+        <div class="section-title">Font Styling</div>
+        <select id="fontFamily">
+          <option value="Arial" selected>Standard Sans</option>
+          <option value="Georgia">Elegant Serif</option>
+          <option value="Impact">Bold Impact</option>
+        </select>
+
+        <div class="control-row">
+          <span class="control-label">Font Size</span>
+          <span class="control-value" id="val-fontsize">32px</span>
+        </div>
+        <input type="range" id="slider-fontsize" min="8" max="100" value="32">
+
+        <div class="text-style-row">
+          <div class="text-style-btn" id="btn-bold">B</div>
+          <div class="text-style-btn" id="btn-italic">I</div>
+          <div class="text-style-btn">Center</div>
+        </div>
+
+        <div class="section-title">Colors</div>
+        <div class="color-picker-row">
+          <input type="color" id="textColor" value="#000000">
+          <input type="text" id="textColorHex" value="#000000" style="margin:0;flex:1;">
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-more">
+        <div class="section-title">Effects & Canvas Options</div>
+        <div class="toggle-row">
+          <span class="control-label">Enable Gridlines</span>
+          <div class="toggle" id="gridToggle"></div>
+        </div>
+        <div class="action-btn danger" onclick="clearCanvas()">🗑 Clear Project</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+<script>
+  // Dummy functions just to keep the UI interactions running smoothly without breaking errors
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.panel-tab').forEach(el => el.classList.remove('active'));
+    const targetTab = document.getElementById('tab-' + tabId);
+    if(targetTab) targetTab.classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  function setTool(toolName) {
+    document.querySelectorAll('.tool-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tool-' + toolName)?.classList.add('active');
+    showNotif("Tool switched to " + toolName.toUpperCase());
+  }
+
+  function showNotif(msg) {
+    const notif = document.getElementById('notif');
+    notif.textContent = msg;
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 2000);
+  }
+
+  // Toggles behavior
+  document.querySelectorAll('.toggle').forEach(t => {
+    t.addEventListener('click', () => t.classList.toggle('on'));
+  });
+  document.querySelectorAll('.text-style-btn').forEach(b => {
+    b.addEventListener('click', () => b.classList.toggle('active'));
+  });
+
+  function undoAction() { showNotif("Undo"); }
+  function redoAction() { showNotif("Redo"); }
+  function clearCanvas() { showNotif("Canvas cleared"); }
+  function downloadImage() { showNotif("Saving Image..."); }
+  function rotateImage() { showNotif("Rotated 90°"); }
+  function flipImage() { showNotif("Flipped horizontally"); }
+  function resetAdjustments() { showNotif("Reset all parameters"); }
+  function changeZoom(val) { showNotif("Zoom changed"); }
+</script>
+</body>
+</html>
