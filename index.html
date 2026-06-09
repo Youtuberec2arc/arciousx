@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rec Image Editor - Official Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #f5f5f7;
+    --bg-panel: #ffffff;
+    --bg-card: #f2f2f7;
+    --bg-hover: #e5e5ea;
+    --accent-blue: #0071e3;
+    --accent-gray: #8e8e93;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --border: #d2d2d7;
+    --danger: #ff3b30;
+    --success: #34c759;
+    --gold: #ff9500;
+  }
+
+  * { 
+    margin: 0; padding: 0; box-sizing: border-box; 
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-icon { font-size: 20px; }
+  .logo-text { font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
+  .logo-sub { font-size: 10px; font-weight: 600; color: var(--accent-blue); text-transform: uppercase; margin-left: 2px; }
+
+  .header-actions { display: flex; align-items: center; gap: 6px; }
+
+  /* BUTTONS */
+  .btn { padding: 6px 12px; border-radius: 8px; font-weight: 500; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+  .btn-ghost { background: transparent; color: var(--text-secondary); }
+  .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .btn-primary { background: var(--accent-blue); color: white; }
+  .btn-download { background: #e1f0ff; color: var(--accent-blue); font-weight: 600; }
+
+  /* MAIN LAYOUT */
+  .main { display: flex; flex-direction: column; flex: 1; overflow: hidden; position: relative; }
+  @media (min-width: 900px) { .main { flex-direction: row; } }
+
+  /* TOOLBAR (Mobile: Top Scrollable | Desktop: Left Sidebar) */
+  .left-toolbar {
+    width: 100%; background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: row; padding: 6px; gap: 4px;
+    overflow-x: auto; white-space: nowrap; flex-shrink: 0;
+  }
+  .left-toolbar::-webkit-scrollbar { display: none; }
+
+  @media (min-width: 900px) {
+    .left-toolbar { width: 76px; flex-direction: column; border-right: 1px solid var(--border); border-bottom: none; overflow-y: auto; }
+  }
+
+  .tool-btn {
+    padding: 6px; min-width: 58px; height: 52px; border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; background: transparent; color: var(--text-secondary); gap: 4px; border: none;
+  }
+  .tool-btn:hover, .tool-btn.active { background: var(--bg-card); color: var(--accent-blue); }
+  .tool-icon { font-size: 18px; }
+  .tool-label { font-size: 9px; font-weight: 600; text-transform: uppercase; }
+  .tool-divider { width: 1px; height: 24px; background: var(--border); align-self: center; margin: 0 4px; }
+  @media (min-width: 900px) { .tool-divider { width: 32px; height: 1px; margin: 6px 0; } }
+
+  /* CANVAS WORKSPACE */
+  .canvas-area { flex: 1; background: var(--bg-main); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 16px; }
+  .canvas-wrapper { position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.06); background: white; border-radius: 4px; }
+  #mainCanvas { display: block; max-width: 100%; max-height: 100%; cursor: crosshair; }
+  
+  .upload-drop-zone { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .no-image-placeholder { text-align: center; }
+  .placeholder-icon { font-size: 48px; color: var(--accent-gray); margin-bottom: 8px; }
+  .placeholder-text { font-weight: 600; font-size: 14px; }
+  .placeholder-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .upload-drop-zone.has-image { pointer-events: none; display: none; }
+
+  /* FLOATING CONTROLS */
+  .canvas-controls {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border); border-radius: 30px; padding: 6px 14px;
+    backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 5;
+  }
+  .zoom-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-card); border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .zoom-level { font-size: 12px; font-weight: 500; min-width: 42px; text-align: center; }
+
+  /* CONTROL PANEL */
+  .right-panel { width: 100%; height: 42vh; background: var(--bg-panel); border-top: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+  @media (min-width: 900px) { .right-panel { width: 310px; height: auto; border-top: none; border-left: 1px solid var(--border); } }
+
+  .panel-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-panel); flex-shrink: 0; }
+  .panel-tab { flex: 1; padding: 12px 2px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; text-transform: uppercase; }
+  .panel-tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+  .panel-content { flex: 1; overflow-y: auto; padding: 14px; background: #ffffff; }
+  .section-title { font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 14px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;}
+  .section-title:first-child { margin-top: 0; }
+
+  /* ADJUSTMENT INPUTS */
+  .control-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .control-label { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+  .control-value { font-size: 11px; font-weight: 600; color: var(--accent-blue); }
+  
+  input[type="range"] { width: 100%; height: 4px; background: var(--bg-card); border-radius: 2px; outline: none; margin-bottom: 12px; -webkit-appearance: none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.15); cursor: pointer; }
+
+  input[type="text"], input[type="number"], select, textarea { width: 100%; background: var(--bg-card); border: 1px solid transparent; border-radius: 8px; color: var(--text-primary); padding: 8px 10px; font-size: 13px; outline: none; margin-bottom: 8px; }
+  input[type="text"]:focus, select:focus, textarea:focus { background: #ffffff; border-color: var(--accent-blue); }
+
+  /* COLOR SWATCHES */
+  .color-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-bottom: 10px; }
+  .color-swatch { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 1px solid rgba(0,0,0,0.08); transition: transform 0.1s; }
+  .color-swatch.selected { border: 2px solid var(--text-primary); transform: scale(1.1); }
+  input[type="color"] { width: 40px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: transparent; cursor: pointer; padding: 2px; }
+
+  /* GRIDS & ACTIONS */
+  .action-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 8px; }
+  .action-btn { padding: 8px; background: var(--bg-card); border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: center; font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .action-btn.danger { color: var(--danger); }
+  .action-btn:active { background: var(--bg-hover); }
+
+  .text-style-row { display: flex; gap: 4px; margin-bottom: 8px; }
+  .text-style-btn { flex: 1; padding: 8px; background: var(--bg-card); border-radius: 6px; cursor: pointer; text-align: center; font-size: 12px; font-weight: 600; }
+  .text-style-btn.active { background: #e1f0ff; color: var(--accent-blue); }
+
+  /* CUSTOM UNIQUE GRIDS FROM YOUR FILE */
+  .effect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .effect-chip { padding: 8px 4px; background: var(--bg-card); border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: center; }
+  .effect-chip.active { background: #e1f0ff; border-color: var(--accent-blue); }
+  .effect-chip-label { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+
+  .sticker-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .sticker-item { aspect-ratio: 1; background: var(--bg-card); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
+
+  .shape-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .shape-item { aspect-ratio: 1; background: var(--bg-card); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
+  .shape-item.active { background: #e1f0ff; color: var(--accent-blue); }
+
+  /* TOGGLE */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .toggle { width: 42px; height: 22px; background: var(--bg-hover); border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s; }
+  .toggle.on { background: var(--success); }
+  .toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+  .toggle.on::after { left: 22px; }
+
+  /* NOTIFICATION */
+  .notif { position: fixed; top: 72px; left: 50%; transform: translateX(-50%); background: rgba(29, 29, 31, 0.95); color: white; border-radius: 20px; padding: 8px 16px; font-size: 12px; font-weight: 500; opacity: 0; transition: opacity 0.3s; z-index: 100; pointer-events: none; }
+  .notif.show { opacity: 1; }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="notif" id="notif">✓ Action completed</div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🎨</div>
+    <div>
+      <span class="logo-text">Rec</span>
+      <span class="logo-sub">Studio</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="undoAction()">↩ Undo</button>
+    <button class="btn btn-ghost" onclick="redoAction()">↪ Redo</button>
+    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">📁 Open</button>
+    <button class="btn btn-download" onclick="downloadImage()">⬇ Save</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="left-toolbar">
+    <div class="tool-btn active" id="tool-select" onclick="setTool('select')">
+      <div class="tool-icon">↖</div>
+      <div class="tool-label">Select</div>
+    </div>
+    <div class="tool-btn" id="tool-crop" onclick="setTool('crop')">
+      <div class="tool-icon">⬜</div>
+      <div class="tool-label">Crop</div>
+    </div>
+    <div class="tool-btn" id="tool-draw" onclick="setTool('draw'); showTab('adjust')">
+      <div class="tool-icon">✏️</div>
+      <div class="tool-label">Draw</div>
+    </div>
+    <div class="tool-btn" id="tool-text" onclick="setTool('text'); showTab('text')">
+      <div class="tool-icon">T</div>
+      <div class="tool-label">Text</div>
+    </div>
+    <div class="tool-btn" id="tool-shape" onclick="setTool('shape'); showTab('shapes')">
+      <div class="tool-icon">◼</div>
+      <div class="tool-label">Shape</div>
+    </div>
+    <div class="tool-divider"></div>
+    <div class="tool-btn" onclick="rotateImage()">
+      <div class="tool-icon">🔄</div>
+      <div class="tool-label">Rotate</div>
+    </div>
+    <div class="tool-btn" onclick="flipImage()">
+      <div class="tool-icon">↔</div>
+      <div class="tool-label">Flip</div>
+    </div>
+    <div class="tool-btn" id="tool-clone" onclick="setTool('clone'); showNotif('Clone Stamp: Click source area')">
+      <div class="tool-icon">🖌</div>
+      <div class="tool-label">Clone</div>
+    </div>
+    <div class="tool-divider"></div>
+    <div class="tool-btn" onclick="showTab('effects')">
+      <div class="tool-icon">✨</div>
+      <div class="tool-label">FX</div>
+    </div>
+    <div class="tool-btn" onclick="showTab('stickers')">
+      <div class="tool-icon">⭐</div>
+      <div class="tool-label">Sticker</div>
+    </div>
+    <div class="tool-btn" onclick="showTab('border')">
+      <div class="tool-icon">🔲</div>
+      <div class="tool-label">Border</div>
+    </div>
+  </div>
+
+  <div class="canvas-area" id="canvasArea">
+    <div class="upload-drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="no-image-placeholder" id="placeholder">
+        <div class="placeholder-icon">🖼️</div>
+        <div class="placeholder-text">TAP OR DROP IMAGE HERE</div>
+        <div class="placeholder-sub">Supports PNG, JPG, WEBP</div>
+      </div>
+    </div>
+    <div class="canvas-wrapper" id="canvasWrapper" style="display:none;">
+      <canvas id="mainCanvas"></canvas>
+    </div>
+    <div class="canvas-controls">
+      <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+      <div class="zoom-level" id="zoomLevel">100%</div>
+      <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="panel-tabs">
+      <div class="panel-tab active" onclick="showTab('adjust')">Adjust</div>
+      <div class="panel-tab" onclick="showTab('text')">Text</div>
+      <div class="panel-tab" onclick="showTab('effects')">FX</div>
+      <div class="panel-tab" onclick="showTab('shapes')">Shapes</div>
+      <div class="panel-tab" onclick="showTab('stickers')">More</div>
+    </div>
+
+    <div class="panel-content">
+
+      <div class="tab-pane active" id="tab-adjust">
+        <div class="section-title">Brightness & Contrast</div>
+        <div class="control-row"><span class="control-label">Brightness</span><span class="control-value" id="val-brightness">0</span></div>
+        <input type="range" id="slider-brightness" min="-100" max="100" value="0" oninput="updateVal('brightness', this.value)">
+
+        <div class="control-row"><span class="control-label">Contrast</span><span class="control-value" id="val-contrast">0</span></div>
+        <input type="range" id="slider-contrast" min="-100" max="100" value="0" oninput="updateVal('contrast', this.value)">
+
+        <div class="section-title">Color Tuning</div>
+        <div class="control-row"><span class="control-label">Saturation</span><span class="control-value" id="val-saturation">0</span></div>
+        <input type="range" id="slider-saturation" min="-100" max="100" value="0" oninput="updateVal('saturation', this.value)">
+
+        <div class="control-row"><span class="control-label">Hue</span><span class="control-value" id="val-hue">0°</span></div>
+        <input type="range" id="slider-hue" min="-180" max="180" value="0" oninput="updateVal('hue', this.value, '°')">
+
+        <div class="section-title">Details</div>
+        <div class="control-row"><span class="control-label">Blur</span><span class="control-value" id="val-blur">0</span></div>
+        <input type="range" id="slider-blur" min="0" max="20" value="0" oninput="updateVal('blur', this.value)">
+
+        <div class="action-row">
+          <div class="action-btn" onclick="rotateImage()">↻ Rotate 90°</div>
+          <div class="action-btn danger" onclick="resetAdjustments()">⟳ Reset All</div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-text">
+        <div class="section-title">Add Text</div>
+        <textarea id="textContent" rows="2" placeholder="Type text here..."></textarea>
+
+        <div class="section-title">Font Family</div>
+        <select id="fontFamily">
+          <option value="Arial" selected>Arial</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Impact">Impact</option>
+          <option value="Montserrat">Montserrat</option>
+        </select>
+
+        <div class="control-row"><span class="control-label">Font Size</span><span class="control-value" id="val-fontsize">32px</span></div>
+        <input type="range" id="slider-fontsize" min="8" max="150" value="32" oninput="updateVal('fontsize', this.value, 'px')">
+
+        <div class="text-style-row">
+          <div class="text-style-btn" id="btn-bold"><b>B</b></div>
+          <div class="text-style-btn" id="btn-italic"><i>I</i></div>
+          <div class="text-style-btn" id="btn-underline"><u>U</u></div>
+        </div>
+
+        <div class="section-title">Text Colors</div>
+        <div class="color-picker-row">
+          <input type="color" id="textColor" value="#1d1d1f">
+          <input type="text" id="textColorHex" value="#1d1d1f" style="margin:0;flex:1;">
+        </div>
+        <div class="color-grid" id="textColorGrid"></div>
+
+        <div class="section-title">✨ Custom Highlight</div>
+        <div class="toggle-row"><span class="control-label">Enable Highlight</span><div class="toggle" id="highlightToggle"></div></div>
+
+        <div class="section-title">Stroke Outline</div>
+        <div class="toggle-row"><span class="control-label">Enable Stroke</span><div class="toggle" id="strokeToggle"></div></div>
+      </div>
+
+      <div class="tab-pane" id="tab-effects">
+        <div class="section-title">Photo Filters</div>
+        <div class="effect-grid">
+          <div class="effect-chip active" onclick="setEffect(this, 'none')"><div class="effect-chip-label">Original</div></div>
+          <div class="effect-chip" onclick="setEffect(this, 'chrome')"><div class="effect-chip-label">Chrome</div></div>
+          <div class="effect-chip" onclick="setEffect(this, 'vintage')"><div class="effect-chip-label">Vintage</div></div>
+          <div class="effect-chip" onclick="setEffect(this, 'mono')"><div class="effect-chip-label">Mono</div></div>
+          <div class="effect-chip" onclick="setEffect(this, 'noir')"><div class="effect-chip-label">Noir</div></div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-shapes">
+        <div class="section-title">Insert Shapes</div>
+        <div class="shape-grid">
+          <div class="shape-item active">⬛</div>
+          <div class="shape-item">⚪</div>
+          <div class="shape-item">▲</div>
+          <div class="shape-item">⭐</div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-stickers">
+        <div class="section-title">Stickers</div>
+        <div class="sticker-grid">
+          <div class="sticker-item">❤️</div>
+          <div class="sticker-item">👍</div>
+          <div class="sticker-item">🔥</div>
+          <div class="sticker-item">👑</div>
+          <div class="sticker-item">✨</div>
+        </div>
+
+        <div class="section-title" id="tab-border">Border Options</div>
+        <div class="action-row">
+          <div class="action-btn" onclick="showNotif('Border Added')">Add Outer Border</div>
+          <div class="action-btn danger" onclick="clearCanvas()">🗑 Clear Project</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+<script>
+  // UI Tabs Switcher
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.panel-tab').forEach(el => el.classList.remove('active'));
+    
+    const targetTab = document.getElementById('tab-' + tabId);
+    if(targetTab) targetTab.classList.add('active');
+    
+    // Highlights the exact clicked tab header link
+    const tabs = document.querySelectorAll('.panel-tab');
+    tabs.forEach(tab => {
+      if(tab.getAttribute('onclick').includes(tabId)) tab.classList.add('active');
+    });
+  }
+
+  // Active Tool Handler
+  function setTool(toolName) {
+    document.querySelectorAll('.tool-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tool-' + toolName)?.classList.add('active');
+    showNotif("Active Tool: " + toolName.toUpperCase());
+  }
+
+  // Utility Live Value Updator
+  function updateVal(id, val, unit = '') {
+    const displayEl = document.getElementById('val-' + id);
+    if(displayEl) displayEl.textContent = val + unit;
+  }
+
+  // Active Effects Chip Switcher
+  function setEffect(el, name) {
+    document.querySelectorAll('.effect-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    showNotif("Filter applied: " + name.toUpperCase());
+  }
+
+  // Generic System Notifications 
+  function showNotif(msg) {
+    const notif = document.getElementById('notif');
+    notif.textContent = msg;
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 2000);
+  }
+
+  // Set-up listeners for Toggles, Swatches & Style buttons
+  document.querySelectorAll('.toggle').forEach(t => t.addEventListener('click', () => t.classList.toggle('on')));
+  document.querySelectorAll('.text-style-btn').forEach(b => b.addEventListener('click', () => b.classList.toggle('active')));
+  document.querySelectorAll('.shape-item').forEach(s => s.addEventListener('click', function() {
+    document.querySelectorAll('.shape-item').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+  }));
+
+  // Setup Dynamic Color Grid 
+  const colors = ['#ffffff', '#1d1d1f', '#ff3b30', '#ff9500', '#34c759', '#0071e3', '#5856d6', '#af52de'];
+  const grid = document.getElementById('textColorGrid');
+  colors.forEach(col => {
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch';
+    swatch.style.background = col;
+    swatch.onclick = () => {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      swatch.classList.add('selected');
+      document.getElementById('textColor').value = col;
+      document.getElementById('textColorHex').value = col;
+    };
+    grid.appendChild(swatch);
+  });
+
+  // Dynamic Image Uploader / DropZone Simulator
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    if(this.files && this.files[0]) {
+      document.getElementById('dropZone').classList.add('has-image');
+      document.getElementById('canvasWrapper').style.display = 'block';
+      
+      // Initialize internal HTML5 Canvas Size mapping
+      const canvas = document.getElementById('mainCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 300;
+      canvas.height = 200;
+      ctx.fillStyle = "#e5e5ea";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#6e6e73";
+      ctx.font = "14px Inter";
+      ctx.fillText("Image Loaded", 100, 100);
+      
+      showNotif("Image imported successfully");
+    }
+  });
+
+  // Dummy Fallbacks for Core Actions 
+  function undoAction() { showNotif("Undo Action"); }
+  function redoAction() { showNotif("Redo Action"); }
+  function clearCanvas() { 
+    document.getElementById('dropZone').classList.remove('has-image');
+    document.getElementById('canvasWrapper').style.display = 'none';
+    showNotif("Project Cleared"); 
+  }
+  function downloadImage() { showNotif("Exporting File..."); }
+  function rotateImage() { showNotif("Rotated 90°"); }
+  function flipImage() { showNotif("Horizontal Mirror Flipped"); }
+  function resetAdjustments() { 
+    document.querySelectorAll('input[type="range"]').forEach(r => r.value = 0);
+    showNotif("Adjustments Reset Done");
+  }
+  function changeZoom(v) { showNotif("Zoom adjusted"); }
+</script>
+</body>
+</html>
