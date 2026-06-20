@@ -5,291 +5,279 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HindiAnimeStuff — Dubbed Anime, Discovered</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --void:#0c0a0a;
-    --card:#1a1010;
-    --card-hover:#221414;
-    --ember:#3a1818;
-    --blood:#9e1b1b;
-    --blood-bright:#d62c2c;
-    --bone:#f0e4d0;
-    --bone-dim:#9c8c7a;
-    --gold:#c9a35a;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--void);
-    color:var(--bone);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    overflow-x:hidden;
+  :root {
+    --bg-main: #f8f9fa;
+    --bg-card: #ffffff;
+    --border-color: #e5e7eb;
+    --text-main: #111827;
+    --text-dim: #4b5563;
+    --crunchy-orange: #f47521;
+    --crunchy-orange-hover: #ff8533;
+    --gold: #d97706;
   }
 
-  /* ambient texture */
-  body::before{
-    content:'';
-    position:fixed;
-    inset:0;
-    background:
-      radial-gradient(ellipse 70% 45% at 50% -5%, rgba(158,27,27,0.18), transparent 60%),
-      radial-gradient(ellipse 50% 35% at 100% 95%, rgba(158,27,27,0.08), transparent 60%);
-    pointer-events:none;
-    z-index:0;
-  }
-  body::after{
-    content:'';
-    position:fixed;
-    inset:0;
-    background-image:
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, transparent 1px, transparent 2px);
-    pointer-events:none;
-    z-index:0;
-    mix-blend-mode:overlay;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* ---------- HEADER ---------- */
-  header{
-    position:relative;
-    z-index:2;
-    padding:52px 24px 28px;
-    text-align:center;
+  /* ---------- TOP NAVIGATION LINKS ---------- */
+  .nav-bar {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
   }
-  .mark{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:18px;
+  .nav-link {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
   }
-  .mark-glyph{
-    width:28px;height:28px;
-    border:2px solid var(--blood-bright);
-    transform:rotate(45deg);
-    position:relative;
-  }
-  .mark-glyph::after{
-    content:'';
-    position:absolute;
-    inset:5px;
-    background:var(--blood-bright);
-  }
-  .brand{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(2.1rem,7.5vw,4rem);
-    letter-spacing:0.02em;
-    line-height:1;
-    white-space:nowrap;
-  }
-  .brand .hi{color:var(--bone);}
-  .brand .ja{color:var(--blood-bright);}
-  .tagline{
-    margin-top:12px;
-    color:var(--bone-dim);
-    font-size:0.92rem;
-    letter-spacing:0.04em;
-    font-weight:500;
+  .nav-link:hover {
+    color: var(--crunchy-orange);
   }
 
-  .stat-strip{
-    display:flex;
-    justify-content:center;
-    gap:32px;
-    margin-top:26px;
-    flex-wrap:wrap;
+  /* ---------- HEADER & SEARCH ---------- */
+  header {
+    padding: 40px 24px 20px;
+    text-align: center;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
   }
-  .stat{text-align:center;}
-  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--blood-bright);}
-  .stat-label{font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--bone-dim);}
+  .brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    letter-spacing: 0.03em;
+    line-height: 1;
+    color: var(--text-main);
+    margin-bottom: 8px;
+  }
+  .brand span { color: var(--crunchy-orange); }
+  .tagline {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+
+  /* Crunchyroll Style Search Container */
+  .search-container {
+    max-width: 500px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .search-bar {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: var(--bg-main);
+  }
+  .search-bar:focus {
+    border-color: var(--crunchy-orange);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(244, 117, 33, 0.15);
+  }
+
+  .stat-strip {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--crunchy-orange); }
+  .stat-label { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
 
   /* ---------- GENRE FILTER ---------- */
-  .filter-row{
-    position:relative;z-index:2;
-    display:flex;
-    gap:8px;
-    justify-content:center;
-    flex-wrap:wrap;
-    padding:0 20px 36px;
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 24px 20px;
   }
-  .filter-chip{
-    font-size:0.72rem;
-    letter-spacing:0.05em;
-    text-transform:uppercase;
-    font-weight:600;
-    color:var(--bone-dim);
-    background:transparent;
-    border:1px solid var(--ember);
-    padding:7px 16px;
-    border-radius:100px;
-    cursor:pointer;
-    transition:all 0.2s ease;
+  .filter-chip {
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    color: var(--text-dim);
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
-  .filter-chip:hover{border-color:var(--blood-bright);color:var(--bone);}
-  .filter-chip.active{
-    background:var(--blood-bright);
-    border-color:var(--blood-bright);
-    color:#0c0a0a;
+  .filter-chip:hover { border-color: var(--crunchy-orange); color: var(--crunchy-orange); }
+  .filter-chip.active {
+    background: var(--crunchy-orange);
+    border-color: var(--crunchy-orange);
+    color: #ffffff;
   }
 
-  /* ---------- FRANCHISE GROUPS ---------- */
-  main{
-    position:relative;z-index:2;
-    max-width:1080px;
-    margin:0 auto;
-    padding:0 20px 100px;
-    display:flex;
-    flex-direction:column;
-    gap:44px;
+  /* ---------- MAIN FRANCHISE GROUPS ---------- */
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .franchise { display: none; }
+  .franchise.visible { display: block; }
+
+  .franchise-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 8px;
+  }
+  .franchise-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.02em;
+    color: var(--text-main);
+  }
+  .franchise-sub {
+    font-size: 0.8rem;
+    color: var(--text-dim);
   }
 
-  .franchise{display:none;}
-  .franchise.visible{display:block;}
-
-  .franchise-head{
-    display:flex;
-    align-items:baseline;
-    gap:14px;
-    margin-bottom:16px;
-    border-bottom:1px solid var(--ember);
-    padding-bottom:10px;
-  }
-  .franchise-title{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:1.5rem;
-    letter-spacing:0.02em;
-  }
-  .franchise-sub{
-    font-size:0.75rem;
-    color:var(--bone-dim);
-    letter-spacing:0.02em;
+  .season-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
   }
 
-  .season-row{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:14px;
+  /* ---------- CRUNCHYROLL LITE CARD ---------- */
+  .card {
+    display: flex;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-color: var(--crunchy-orange);
+  }
+  .card:hover .card-thumb img { transform: scale(1.04); }
+
+  .card-thumb {
+    flex: 0 0 100px;
+    width: 100px;
+    position: relative;
+    overflow: hidden;
+    background: #e5e7eb;
+  }
+  .card-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .thumb-fallback {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
+    color: var(--crunchy-orange); opacity: 0.5;
   }
 
-  .card{
-    display:flex;
-    background:var(--card);
-    border:1px solid var(--ember);
-    border-radius:8px;
-    overflow:hidden;
-    text-decoration:none;
-    color:inherit;
-    position:relative;
-    transition:border-color 0.25s ease, transform 0.2s ease, background 0.25s ease;
+  .card-body {
+    flex: 1;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
   }
-  .card:hover{
-    border-color:var(--blood-bright);
-    background:var(--card-hover);
-    transform:translateY(-2px);
+  .card-season {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--crunchy-orange);
+    font-weight: 700;
   }
-  .card:hover .card-thumb img{transform:scale(1.06);}
-  .card:hover .slash{opacity:1;transform:translateX(0);}
-
-  .card-thumb{
-    flex:0 0 96px;
-    width:96px;
-    position:relative;
-    overflow:hidden;
-    background:linear-gradient(160deg,#2a1414,#160a0a);
+  .card-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    color: var(--text-main);
   }
-  .card-thumb img{
-    width:100%;height:100%;
-    object-fit:cover;
-    display:block;
-    transition:transform 0.4s ease;
-    position:relative;
-    z-index:1;
+  .card-foot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
   }
-  .thumb-fallback{
-    position:absolute;inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:'Bebas Neue',sans-serif;
-    font-size:1.6rem;
-    color:var(--blood-bright);
-    opacity:0.5;
-    text-align:center;
-    padding:8px;
+  .card-rating {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--gold);
+  }
+  .card-ep {
+    font-size: 0.75rem;
+    color: var(--text-dim);
   }
 
-  .slash{
-    position:absolute;
-    top:0;bottom:0;left:0;
-    width:3px;
-    background:var(--blood-bright);
-    opacity:0;
-    transform:translateX(-4px);
-    transition:all 0.25s ease;
+  footer {
+    text-align: center;
+    padding: 30px 24px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border-color);
+    background: #ffffff;
+    line-height: 1.6;
   }
-
-  .card-body{
-    flex:1;
-    padding:12px 14px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:5px;
-    min-width:0;
-  }
-  .card-season{
-    font-size:0.68rem;
-    letter-spacing:0.07em;
-    text-transform:uppercase;
-    color:var(--gold);
-    font-weight:600;
-  }
-  .card-title{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:1.08rem;
-    letter-spacing:0.01em;
-    line-height:1.15;
-  }
-  .card-foot{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-top:2px;
-  }
-  .card-rating{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:0.95rem;
-    color:var(--blood-bright);
-  }
-  .card-ep{
-    font-size:0.7rem;
-    color:var(--bone-dim);
-  }
-
-  footer{
-    position:relative;z-index:2;
-    text-align:center;
-    padding:28px 24px;
-    color:var(--bone-dim);
-    font-size:0.75rem;
-    border-top:1px solid var(--ember);
-    line-height:1.6;
-  }
-  footer strong{color:var(--bone);}
+  footer strong { color: var(--text-main); }
 
   @media (max-width:480px){
-    .stat-strip{gap:20px;}
-    .card-thumb{flex:0 0 76px;width:76px;}
-    .card-title{font-size:0.98rem;}
+    .stat-strip { gap: 15px; }
+    .card-thumb { flex: 0 0 85px; width: 85px; }
   }
 </style>
 </head>
 <body>
 
+<div class="nav-bar">
+  <a href="#" class="nav-link">About Us</a>
+  <a href="#" class="nav-link">DMCA</a>
+  <a href="#" class="nav-link">Request Anime</a>
+</div>
+
 <header>
-  <div class="mark"><div class="mark-glyph"></div></div>
-  <div class="brand"><span class="hi">HINDI</span><span class="ja">ANIME</span><span class="hi">STUFF</span></div>
+  <div class="brand">HINDI<span>ANIME</span>STUFF</div>
   <div class="tagline">Dubbed anime, discovered. Watch officially, every time.</div>
+  
+  <div class="search-container">
+    <input type="text" id="searchBar" class="search-bar" placeholder="Search anime series, movies or genres...">
+  </div>
+
   <div class="stat-strip" id="statStrip"></div>
 </header>
 
@@ -298,15 +286,15 @@
 <main id="franchiseList"></main>
 
 <footer>
-  Every title here links out to its <strong>official streaming platform</strong> — Crunchyroll, Netflix, or Prime Video.
+  Every title here links out to its <strong>official streaming platform</strong> — Crunchyroll, Netflix, or Prime Video.<br>
   HindiAnimeStuff does not host, store, or distribute any video files.
 </footer>
 
 <script src="data.js"></script>
 <script>
-  // group by franchise — use explicit franchise key if provided, else title
   const groups = {};
   const displayTitle = {};
+  
   ANIME_DATA.forEach(item => {
     const key = item.franchise || item.title;
     if(!groups[key]) groups[key] = [];
@@ -316,46 +304,43 @@
     }
   });
 
-  // stats
   const totalSeasons = ANIME_DATA.length;
   const totalFranchises = Object.keys(groups).length;
   const allGenres = [...new Set(ANIME_DATA.flatMap(a => a.genres))].sort();
+  
   document.getElementById('statStrip').innerHTML = `
     <div class="stat"><div class="stat-num">${totalFranchises}</div><div class="stat-label">Series</div></div>
     <div class="stat"><div class="stat-num">${totalSeasons}</div><div class="stat-label">Seasons & Films</div></div>
     <div class="stat"><div class="stat-num">${allGenres.length}</div><div class="stat-label">Genres</div></div>
   `;
 
-  // filter chips
   const filterRow = document.getElementById('filterRow');
   filterRow.innerHTML = `<button class="filter-chip active" data-genre="all">All</button>` +
     allGenres.map(g => `<button class="filter-chip" data-genre="${g}">${g}</button>`).join('');
 
-  // build franchise blocks
   const list = document.getElementById('franchiseList');
   Object.entries(groups).forEach(([key, seasons]) => {
     const title = displayTitle[key];
     const genres = [...new Set(seasons.flatMap(s => s.genres))];
     const block = document.createElement('div');
     block.className = 'franchise visible';
-    block.dataset.genres = genres.join(',');
+    block.dataset.genres = genres.join(',').toLowerCase();
+    block.dataset.title = title.toLowerCase();
 
     const seasonCards = seasons.map(item => `
       <a class="card" href="details.html?id=${item.id}">
         <div class="card-thumb">
           <div class="thumb-fallback">${item.season.replace('Season ', 'S')}</div>
-          <img src="${item.thumb}" alt="${item.title} ${item.season}" loading="lazy"
-               onerror="this.style.display='none'">
+          <img src="${item.thumb}" alt="${item.title} ${item.season}" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="card-body">
           <span class="card-season">${item.season}</span>
-          <div class="card-title">${item.title.length > 34 ? item.title.slice(0,32)+'…' : item.title}</div>
+          <div class="card-title">${item.title.length > 45 ? item.title.slice(0,42)+'…' : item.title}</div>
           <div class="card-foot">
             <span class="card-rating">★ ${item.rating}</span>
-            <span class="card-ep">${item.episodes ? item.episodes + ' episodes' : item.runtime}</span>
+            <span class="card-ep">${item.episodes ? item.episodes + ' ep' : item.runtime}</span>
           </div>
         </div>
-        <div class="slash"></div>
       </a>
     `).join('');
 
@@ -369,19 +354,39 @@
     list.appendChild(block);
   });
 
-  // filtering
+  // Dual Filtering: Search Bar + Genre Chips logic
+  const searchBar = document.getElementById('searchBar');
+  
+  function filterAnime() {
+    const query = searchBar.value.toLowerCase().trim();
+    const activeChip = filterRow.querySelector('.filter-chip.active');
+    const selectedGenre = activeChip ? activeChip.dataset.genre.toLowerCase() : 'all';
+
+    document.querySelectorAll('.franchise').forEach(f => {
+      const titleMatches = f.dataset.title.includes(query);
+      const genreData = f.dataset.genres.split(',');
+      const genreMatches = selectedGenre === 'all' || genreData.includes(selectedGenre);
+      
+      // Secondary logic to search across genres via text field too
+      const genreSearchMatches = genreData.some(g => g.includes(query));
+
+      if ((titleMatches || genreSearchMatches) && genreMatches) {
+        f.classList.add('visible');
+      } else {
+        f.classList.remove('visible');
+      }
+    });
+  }
+
+  searchBar.addEventListener('input', filterAnime);
+
   filterRow.addEventListener('click', e => {
     const btn = e.target.closest('.filter-chip');
     if(!btn) return;
     filterRow.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
-    const genre = btn.dataset.genre;
-    document.querySelectorAll('.franchise').forEach(f => {
-      const matches = genre === 'all' || f.dataset.genres.split(',').includes(genre);
-      f.classList.toggle('visible', matches);
-    });
+    filterAnime();
   });
 </script>
-
 </body>
 </html>
