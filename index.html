@@ -5,392 +5,414 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HindiAnimeStuff — Dubbed Anime, Discovered</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg-void: #0a0e12;
-    --bg-surface: #141a22;
-    --bg-surface-hover: #1c2430;
-    --border-color: #243040;
-    --text-main: #f3f4f6;
-    --text-dim: #9ca3af;
-    --crunchy-orange: #f47521;
-    --crunchy-orange-glow: rgba(244, 117, 33, 0.3);
-    --gold: #ffb800;
+  :root{
+    --void:#0c0a0a;
+    --card:#1a1010;
+    --card-hover:#221414;
+    --ember:#3a1818;
+    --blood:#9e1b1b;
+    --blood-bright:#d62c2c;
+    --bone:#f0e4d0;
+    --bone-dim:#9c8c7a;
+    --gold:#c9a35a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--bone);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg-void);
-    color: var(--text-main);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
+  /* ambient texture */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(ellipse 70% 45% at 50% -5%, rgba(158,27,27,0.18), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 100% 95%, rgba(158,27,27,0.08), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+  body::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, transparent 1px, transparent 2px);
+    pointer-events:none;
+    z-index:0;
+    mix-blend-mode:overlay;
   }
 
-  /* ---------- TOP NAVIGATION BAR WITH 3-DOT MENU ---------- */
-  .nav-bar {
-    background: var(--bg-surface);
-    border-bottom: 1px solid var(--border-color);
-    padding: 14px 24px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: relative;
-    z-index: 100;
+  /* ---------- HEADER ---------- */
+  header{
+    position:relative;
+    z-index:2;
+    padding:20px 24px 28px;
+    text-align:center;
   }
-  
-  .menu-container {
-    position: relative;
-    display: inline-block;
+  .mark{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
   }
-
-  /* 3-Dot Button Structure */
-  .three-dots-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-main);
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 4px 10px;
-    border-radius: 50%;
-    transition: background 0.2s;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    justify-content: center;
-    align-items: center;
-    height: 36px; width: 36px;
+  .mark-glyph{
+    width:28px;height:28px;
+    border:2px solid var(--blood-bright);
+    transform:rotate(45deg);
+    position:relative;
   }
-  .three-dots-btn span {
-    width: 4px; height: 4px;
-    background-color: var(--text-main);
-    border-radius: 50%;
-    transition: background 0.2s;
+  .mark-glyph::after{
+    content:'';
+    position:absolute;
+    inset:5px;
+    background:var(--blood-bright);
   }
-  .three-dots-btn:hover {
-    background: var(--border-color);
+  .brand{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(2.1rem,7.5vw,4rem);
+    letter-spacing:0.02em;
+    line-height:1;
+    white-space:nowrap;
   }
-  .three-dots-btn:hover span {
-    background-color: var(--crunchy-orange);
+  .brand .hi{color:var(--bone);}
+  .brand .ja{color:var(--blood-bright);}
+  .tagline{
+    margin-top:12px;
+    color:var(--bone-dim);
+    font-size:0.92rem;
+    letter-spacing:0.04em;
+    font-weight:500;
   }
 
-  /* Dropdown Styling */
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 42px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    min-width: 160px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    overflow: hidden;
+  .stat-strip{
+    display:flex;
+    justify-content:center;
+    gap:32px;
+    margin-top:26px;
+    flex-wrap:wrap;
   }
-  .dropdown-menu.show {
-    display: block;
+  .stat{text-align:center;}
+  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--blood-bright);}
+  .stat-label{font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--bone-dim);}
+
+  /* ---------- TOP NAV ---------- */
+  .topnav{
+    position:relative;z-index:3;
+    display:flex;
+    justify-content:flex-end;
+    padding:18px 24px 0;
   }
-  .dropdown-link {
-    display: block;
-    color: var(--text-main);
-    padding: 12px 16px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background 0.2s, color 0.2s;
+  .menu-btn{
+    width:38px;height:38px;
+    border:1px solid var(--ember);
+    border-radius:8px;
+    background:transparent;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    cursor:pointer;
+    transition:border-color 0.2s ease;
   }
-  .dropdown-link:hover {
-    background: var(--bg-surface-hover);
-    color: var(--crunchy-orange);
+  .menu-btn:hover{border-color:var(--bone-dim);}
+  .menu-btn span{
+    width:16px;height:1.5px;
+    background:var(--bone-dim);
+    border-radius:1px;
+    transition:all 0.2s ease;
+  }
+  .menu-btn.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg);}
+  .menu-btn.open span:nth-child(2){opacity:0;}
+  .menu-btn.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg);}
+
+  .menu-panel{
+    position:absolute;
+    top:62px;right:24px;
+    background:var(--card);
+    border:1px solid var(--ember);
+    border-radius:10px;
+    min-width:190px;
+    padding:8px;
+    display:none;
+    flex-direction:column;
+    gap:2px;
+    box-shadow:0 16px 40px -10px rgba(0,0,0,0.6);
+    z-index:10;
+  }
+  .menu-panel.open{display:flex;}
+  .menu-panel a{
+    color:var(--bone-dim);
+    text-decoration:none;
+    font-size:0.85rem;
+    font-weight:500;
+    padding:10px 12px;
+    border-radius:6px;
+    transition:all 0.15s ease;
+  }
+  .menu-panel a:hover{
+    background:var(--card-hover);
+    color:var(--bone);
   }
 
-  /* ---------- HEADER & SEARCH ---------- */
-  header {
-    padding: 40px 24px 24px;
-    text-align: center;
-    position: relative;
+  /* ---------- SEARCH ---------- */
+  .search-wrap{
+    position:relative;z-index:2;
+    max-width:420px;
+    margin:0 auto 28px;
+    padding:0 20px;
   }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -50px; left: 50%;
-    transform: translateX(-50%);
-    width: 80%; height: 150px;
-    background: radial-gradient(circle, rgba(244,117,33,0.1) 0%, transparent 70%);
-    pointer-events: none;
+  .search-input{
+    width:100%;
+    background:var(--card);
+    border:1px solid var(--ember);
+    color:var(--bone);
+    font-family:'Inter',sans-serif;
+    font-size:0.88rem;
+    padding:11px 16px 11px 38px;
+    border-radius:8px;
+    outline:none;
+    transition:border-color 0.2s ease;
   }
-
-  .brand {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.8rem, 7vw, 4.5rem);
-    letter-spacing: 0.04em;
-    line-height: 1;
-    color: var(--text-main);
-    margin-bottom: 8px;
-    text-shadow: 0 0 20px rgba(0,0,0,0.6);
-  }
-  .brand span { color: var(--crunchy-orange); }
-  .tagline {
-    color: var(--text-dim);
-    font-size: 0.95rem;
-    margin-bottom: 28px;
+  .search-input::placeholder{color:var(--bone-dim);}
+  .search-input:focus{border-color:var(--bone-dim);}
+  .search-icon{
+    position:absolute;
+    left:34px;top:50%;
+    transform:translateY(-50%);
+    width:15px;height:15px;
+    pointer-events:none;
+    opacity:0.55;
   }
 
-  /* Crunchyroll Premium Style Search Container */
-  .search-container {
-    max-width: 520px;
-    margin: 0 auto 24px;
-    position: relative;
+
+  .filter-row{
+    position:relative;z-index:2;
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    padding:0 20px 36px;
   }
-  .search-bar {
-    width: 100%;
-    padding: 14px 24px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    color: var(--text-main);
-    border: 2px solid var(--border-color);
-    border-radius: 30px;
-    outline: none;
-    transition: all 0.25s ease;
-    background: #0f141c;
+  .filter-chip{
+    font-size:0.72rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    font-weight:600;
+    color:var(--bone-dim);
+    background:transparent;
+    border:1px solid var(--ember);
+    padding:7px 16px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:all 0.2s ease;
   }
-  .search-bar:focus {
-    border-color: var(--crunchy-orange);
-    box-shadow: 0 0 15px var(--crunchy-orange-glow);
-    background: var(--bg-surface);
+  .filter-chip:hover{border-color:var(--blood-bright);color:var(--bone);}
+  .filter-chip.active{
+    background:var(--blood-bright);
+    border-color:var(--blood-bright);
+    color:#0c0a0a;
   }
 
-  .stat-strip {
-    display: flex;
-    justify-content: center;
-    gap: 36px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-  }
-  .stat { text-align: center; }
-  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--crunchy-orange); letter-spacing: 0.02em; }
-  .stat-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
-
-  /* ---------- GENRE FILTER ---------- */
-  .filter-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: 16px 20px 32px;
-  }
-  .filter-chip {
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--text-dim);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    padding: 8px 18px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .filter-chip:hover { border-color: var(--crunchy-orange); color: var(--text-main); }
-  .filter-chip.active {
-    background: var(--crunchy-orange);
-    border-color: var(--crunchy-orange);
-    color: #ffffff;
-    box-shadow: 0 4px 12px var(--crunchy-orange-glow);
+  /* ---------- FRANCHISE GROUPS ---------- */
+  main{
+    position:relative;z-index:2;
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 20px 100px;
+    display:flex;
+    flex-direction:column;
+    gap:44px;
   }
 
-  /* ---------- MAIN CATALOG LAYOUT ---------- */
-  main {
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 0 20px 100px;
-    display: flex;
-    flex-direction: column;
-    gap: 44px;
-  }
-  .franchise { display: none; }
-  .franchise.visible { display: block; }
+  .franchise{display:none;}
+  .franchise.visible{display:block;}
 
-  .franchise-head {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-    margin-bottom: 18px;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 10px;
+  .franchise-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:16px;
+    border-bottom:1px solid var(--ember);
+    padding-bottom:10px;
   }
-  .franchise-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    letter-spacing: 0.02em;
-    color: var(--text-main);
+  .franchise-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:1.5rem;
+    letter-spacing:0.02em;
   }
-  .franchise-sub {
-    font-size: 0.8rem;
-    color: var(--text-dim);
+  .franchise-sub{
+    font-size:0.75rem;
+    color:var(--bone-dim);
+    letter-spacing:0.02em;
   }
 
-  .season-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 18px;
+  .season-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:14px;
   }
 
-  /* ---------- PREMIUM ANIME CARD ---------- */
-  .card {
-    display: flex;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    transition: all 0.25s ease;
+  .card{
+    display:flex;
+    background:var(--card);
+    border:1px solid var(--ember);
+    border-radius:8px;
+    overflow:hidden;
+    text-decoration:none;
+    color:inherit;
+    position:relative;
+    transition:border-color 0.25s ease, transform 0.2s ease, background 0.25s ease;
   }
-  .card:hover {
-    transform: translateY(-3px);
-    border-color: var(--crunchy-orange);
-    background: var(--bg-surface-hover);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  .card:hover{
+    border-color:var(--blood-bright);
+    background:var(--card-hover);
+    transform:translateY(-2px);
   }
-  .card:hover .card-thumb img { transform: scale(1.05); }
+  .card:hover .card-thumb img{transform:scale(1.06);}
+  .card:hover .slash{opacity:1;transform:translateX(0);}
 
-  .card-thumb {
-    flex: 0 0 105px;
-    width: 105px;
-    position: relative;
-    overflow: hidden;
-    background: #11161d;
+  .card-thumb{
+    flex:0 0 96px;
+    width:96px;
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(160deg,#2a1414,#160a0a);
   }
-  .card-thumb img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s ease;
+  .card-thumb img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform 0.4s ease;
+    position:relative;
+    z-index:1;
   }
-  .thumb-fallback {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
-    color: var(--crunchy-orange); opacity: 0.4;
-  }
-
-  .card-body {
-    flex: 1;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 6px;
-    min-width: 0;
-  }
-  .card-season {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: var(--crunchy-orange);
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-  .card-title {
-    font-weight: 600;
-    font-size: 1rem;
-    line-height: 1.35;
-    color: var(--text-main);
-  }
-  .card-foot {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 2px;
-  }
-  .card-rating {
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--gold);
-  }
-  .card-ep {
-    font-size: 0.75rem;
-    color: var(--text-dim);
+  .thumb-fallback{
+    position:absolute;inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:1.6rem;
+    color:var(--blood-bright);
+    opacity:0.5;
+    text-align:center;
+    padding:8px;
   }
 
-  footer {
-    text-align: center;
-    padding: 40px 24px;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    border-top: 1px solid var(--border-color);
-    background: var(--bg-surface);
-    line-height: 1.7;
+  .slash{
+    position:absolute;
+    top:0;bottom:0;left:0;
+    width:3px;
+    background:var(--blood-bright);
+    opacity:0;
+    transform:translateX(-4px);
+    transition:all 0.25s ease;
   }
-  footer strong { color: var(--text-main); }
+
+  .card-body{
+    flex:1;
+    padding:12px 14px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:5px;
+    min-width:0;
+  }
+  .card-season{
+    font-size:0.68rem;
+    letter-spacing:0.07em;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:600;
+  }
+  .card-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:1.08rem;
+    letter-spacing:0.01em;
+    line-height:1.15;
+  }
+  .card-foot{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:2px;
+  }
+  .card-rating{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:0.95rem;
+    color:var(--blood-bright);
+  }
+  .card-ep{
+    font-size:0.7rem;
+    color:var(--bone-dim);
+  }
+
+  footer{
+    position:relative;z-index:2;
+    text-align:center;
+    padding:28px 24px;
+    color:var(--bone-dim);
+    font-size:0.75rem;
+    border-top:1px solid var(--ember);
+    line-height:1.6;
+  }
+  footer strong{color:var(--bone);}
 
   @media (max-width:480px){
-    .stat-strip { gap: 20px; }
-    .card-thumb { flex: 0 0 90px; width: 90px; }
-    main { padding-bottom: 60px; }
+    .stat-strip{gap:20px;}
+    .card-thumb{flex:0 0 76px;width:76px;}
+    .card-title{font-size:0.98rem;}
   }
 </style>
 </head>
 <body>
 
-<div class="nav-bar">
-  <div class="menu-container">
-    <button class="three-dots-btn" id="menuBtn" aria-label="Open menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="dropdown-menu" id="dropdownMenu">
-      <a href="#" class="dropdown-link">About Us</a>
-      <a href="#" class="dropdown-link">Request Anime</a>
-      <a href="#" class="dropdown-link">DMCA</a>
-    </div>
+<div class="topnav">
+  <button class="menu-btn" id="menuBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="menu-panel" id="menuPanel">
+    <a href="about.html">About</a>
+    <a href="request.html">Request Anime</a>
+    <a href="dmca.html">DMCA</a>
   </div>
 </div>
 
 <header>
-  <div class="brand">HINDI<span>ANIME</span>STUFF</div>
+  <div class="mark"><div class="mark-glyph"></div></div>
+  <div class="brand"><span class="hi">HINDI</span><span class="ja">ANIME</span><span class="hi">STUFF</span></div>
   <div class="tagline">Dubbed anime, discovered. Watch officially, every time.</div>
-  
-  <div class="search-container">
-    <input type="text" id="searchBar" class="search-bar" placeholder="Search anime series, movies or genres...">
-  </div>
-
   <div class="stat-strip" id="statStrip"></div>
 </header>
+
+<div class="search-wrap">
+  <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+  <input type="text" class="search-input" id="searchInput" placeholder="Search anime…">
+</div>
 
 <div class="filter-row" id="filterRow"></div>
 
 <main id="franchiseList"></main>
 
 <footer>
-  Every title here links out to its <strong>official streaming platform</strong> — Crunchyroll, Netflix, or Prime Video.<br>
+  Every title here links out to its <strong>official streaming platform</strong> — Crunchyroll, Netflix, or Prime Video.
   HindiAnimeStuff does not host, store, or distribute any video files.
 </footer>
 
 <script src="data.js"></script>
 <script>
-  // Dropdown Toggle Logic
-  const menuBtn = document.getElementById('menuBtn');
-  const dropdownMenu = document.getElementById('dropdownMenu');
-
-  menuBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    dropdownMenu.classList.toggle('show');
-  });
-
-  document.addEventListener('click', () => {
-    dropdownMenu.classList.remove('show');
-  });
-
-  // Structural Processing
+  // group by franchise — use explicit franchise key if provided, else title
   const groups = {};
   const displayTitle = {};
-  
   ANIME_DATA.forEach(item => {
     const key = item.franchise || item.title;
     if(!groups[key]) groups[key] = [];
@@ -400,43 +422,47 @@
     }
   });
 
+  // stats
   const totalSeasons = ANIME_DATA.length;
   const totalFranchises = Object.keys(groups).length;
   const allGenres = [...new Set(ANIME_DATA.flatMap(a => a.genres))].sort();
-  
   document.getElementById('statStrip').innerHTML = `
     <div class="stat"><div class="stat-num">${totalFranchises}</div><div class="stat-label">Series</div></div>
     <div class="stat"><div class="stat-num">${totalSeasons}</div><div class="stat-label">Seasons & Films</div></div>
     <div class="stat"><div class="stat-num">${allGenres.length}</div><div class="stat-label">Genres</div></div>
   `;
 
+  // filter chips
   const filterRow = document.getElementById('filterRow');
   filterRow.innerHTML = `<button class="filter-chip active" data-genre="all">All</button>` +
     allGenres.map(g => `<button class="filter-chip" data-genre="${g}">${g}</button>`).join('');
 
+  // build franchise blocks
   const list = document.getElementById('franchiseList');
   Object.entries(groups).forEach(([key, seasons]) => {
     const title = displayTitle[key];
     const genres = [...new Set(seasons.flatMap(s => s.genres))];
     const block = document.createElement('div');
     block.className = 'franchise visible';
-    block.dataset.genres = genres.join(',').toLowerCase();
-    block.dataset.title = title.toLowerCase();
+    block.dataset.genres = genres.join(',');
+    block.dataset.title = title;
 
     const seasonCards = seasons.map(item => `
       <a class="card" href="details.html?id=${item.id}">
         <div class="card-thumb">
           <div class="thumb-fallback">${item.season.replace('Season ', 'S')}</div>
-          <img src="${item.thumb}" alt="${item.title} ${item.season}" loading="lazy" onerror="this.style.display='none'">
+          <img src="${item.thumb}" alt="${item.title} ${item.season}" loading="lazy"
+               onerror="this.style.display='none'">
         </div>
         <div class="card-body">
           <span class="card-season">${item.season}</span>
-          <div class="card-title">${item.title.length > 45 ? item.title.slice(0,42)+'…' : item.title}</div>
+          <div class="card-title">${item.title.length > 34 ? item.title.slice(0,32)+'…' : item.title}</div>
           <div class="card-foot">
             <span class="card-rating">★ ${item.rating}</span>
-            <span class="card-ep">${item.episodes ? item.episodes + ' ep' : item.runtime}</span>
+            <span class="card-ep">${item.episodes ? item.episodes + ' episodes' : item.runtime}</span>
           </div>
         </div>
+        <div class="slash"></div>
       </a>
     `).join('');
 
@@ -450,37 +476,44 @@
     list.appendChild(block);
   });
 
-  // Live Search + Filter System
-  const searchBar = document.getElementById('searchBar');
-  
-  function filterAnime() {
-    const query = searchBar.value.toLowerCase().trim();
-    const activeChip = filterRow.querySelector('.filter-chip.active');
-    const selectedGenre = activeChip ? activeChip.dataset.genre.toLowerCase() : 'all';
+  // hamburger menu
+  const menuBtn = document.getElementById('menuBtn');
+  const menuPanel = document.getElementById('menuPanel');
+  menuBtn.addEventListener('click', () => {
+    menuBtn.classList.toggle('open');
+    menuPanel.classList.toggle('open');
+  });
+  document.addEventListener('click', e => {
+    if(!menuBtn.contains(e.target) && !menuPanel.contains(e.target)){
+      menuBtn.classList.remove('open');
+      menuPanel.classList.remove('open');
+    }
+  });
 
+  // search — filters franchise blocks by title match, independent of genre filter
+  const searchInput = document.getElementById('searchInput');
+  let activeGenre = 'all';
+
+  function applyFilters(){
+    const query = searchInput.value.trim().toLowerCase();
     document.querySelectorAll('.franchise').forEach(f => {
-      const titleMatches = f.dataset.title.includes(query);
-      const genreData = f.dataset.genres.split(',');
-      const genreMatches = selectedGenre === 'all' || genreData.includes(selectedGenre);
-      const genreSearchMatches = genreData.some(g => g.includes(query));
-
-      if ((titleMatches || genreSearchMatches) && genreMatches) {
-        f.classList.add('visible');
-      } else {
-        f.classList.remove('visible');
-      }
+      const genreMatch = activeGenre === 'all' || f.dataset.genres.split(',').includes(activeGenre);
+      const titleMatch = !query || f.dataset.title.toLowerCase().includes(query);
+      f.classList.toggle('visible', genreMatch && titleMatch);
     });
   }
+  searchInput.addEventListener('input', applyFilters);
 
-  searchBar.addEventListener('input', filterAnime);
-
+  // filtering
   filterRow.addEventListener('click', e => {
     const btn = e.target.closest('.filter-chip');
     if(!btn) return;
     filterRow.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
-    filterAnime();
+    activeGenre = btn.dataset.genre;
+    applyFilters();
   });
 </script>
+
 </body>
 </html>
