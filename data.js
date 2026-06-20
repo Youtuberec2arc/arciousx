@@ -5,7 +5,7 @@ const ANIME_DATA = [
     id: "overlord-s1",
     title: "Overlord",
     season: "Season 1",
-    thumb: "https://i.ibb.co/G3nbpH7b/JAabrxi-H.jpg",
+    thumb: "https://i.imgur.com/Lznc1Mc.jpeg",
     genres: ["Animation", "Adventure", "Fantasy"],
     run: "TV Series (2015–2022)",
     runtime: "24 min",
