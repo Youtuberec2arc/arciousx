@@ -8,137 +8,208 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-main: #f8f9fa;
-    --bg-card: #ffffff;
-    --border-color: #e5e7eb;
-    --text-main: #111827;
-    --text-dim: #4b5563;
+    --bg-void: #0a0e12;
+    --bg-surface: #141a22;
+    --bg-surface-hover: #1c2430;
+    --border-color: #243040;
+    --text-main: #f3f4f6;
+    --text-dim: #9ca3af;
     --crunchy-orange: #f47521;
-    --crunchy-orange-hover: #ff8533;
-    --gold: #d97706;
+    --crunchy-orange-glow: rgba(244, 117, 33, 0.3);
+    --gold: #ffb800;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    background: var(--bg-main);
+    background: var(--bg-void);
     color: var(--text-main);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  /* ---------- TOP NAVIGATION LINKS ---------- */
+  /* ---------- TOP NAVIGATION BAR WITH 3-DOT MENU ---------- */
   .nav-bar {
-    background: #ffffff;
+    background: var(--bg-surface);
     border-bottom: 1px solid var(--border-color);
-    padding: 12px 24px;
+    padding: 14px 24px;
     display: flex;
     justify-content: flex-end;
-    gap: 20px;
+    align-items: center;
+    position: relative;
+    z-index: 100;
   }
-  .nav-link {
-    color: var(--text-dim);
+  
+  .menu-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* 3-Dot Button Structure */
+  .three-dots-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    height: 36px; width: 36px;
+  }
+  .three-dots-btn span {
+    width: 4px; height: 4px;
+    background-color: var(--text-main);
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+  .three-dots-btn:hover {
+    background: var(--border-color);
+  }
+  .three-dots-btn:hover span {
+    background-color: var(--crunchy-orange);
+  }
+
+  /* Dropdown Styling */
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 42px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    min-width: 160px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+  .dropdown-menu.show {
+    display: block;
+  }
+  .dropdown-link {
+    display: block;
+    color: var(--text-main);
+    padding: 12px 16px;
     text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: color 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
   }
-  .nav-link:hover {
+  .dropdown-link:hover {
+    background: var(--bg-surface-hover);
     color: var(--crunchy-orange);
   }
 
   /* ---------- HEADER & SEARCH ---------- */
   header {
-    padding: 40px 24px 20px;
+    padding: 40px 24px 24px;
     text-align: center;
-    background: #ffffff;
-    border-bottom: 1px solid var(--border-color);
+    position: relative;
   }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -50px; left: 50%;
+    transform: translateX(-50%);
+    width: 80%; height: 150px;
+    background: radial-gradient(circle, rgba(244,117,33,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
   .brand {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    letter-spacing: 0.03em;
+    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    letter-spacing: 0.04em;
     line-height: 1;
     color: var(--text-main);
     margin-bottom: 8px;
+    text-shadow: 0 0 20px rgba(0,0,0,0.6);
   }
   .brand span { color: var(--crunchy-orange); }
   .tagline {
     color: var(--text-dim);
     font-size: 0.95rem;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
 
-  /* Crunchyroll Style Search Container */
+  /* Crunchyroll Premium Style Search Container */
   .search-container {
-    max-width: 500px;
-    margin: 0 auto 20px;
+    max-width: 520px;
+    margin: 0 auto 24px;
     position: relative;
   }
   .search-bar {
     width: 100%;
-    padding: 12px 20px;
+    padding: 14px 24px;
     font-size: 0.95rem;
     font-family: inherit;
+    color: var(--text-main);
     border: 2px solid var(--border-color);
     border-radius: 30px;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    background: var(--bg-main);
+    transition: all 0.25s ease;
+    background: #0f141c;
   }
   .search-bar:focus {
     border-color: var(--crunchy-orange);
-    background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(244, 117, 33, 0.15);
+    box-shadow: 0 0 15px var(--crunchy-orange-glow);
+    background: var(--bg-surface);
   }
 
   .stat-strip {
     display: flex;
     justify-content: center;
-    gap: 32px;
-    margin-top: 20px;
+    gap: 36px;
+    margin-top: 24px;
     flex-wrap: wrap;
   }
   .stat { text-align: center; }
-  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--crunchy-orange); }
-  .stat-label { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--crunchy-orange); letter-spacing: 0.02em; }
+  .stat-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
 
   /* ---------- GENRE FILTER ---------- */
   .filter-row {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
-    padding: 24px 20px;
+    padding: 16px 20px 32px;
   }
   .filter-chip {
     font-size: 0.75rem;
-    letter-spacing: 0.03em;
-    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
     color: var(--text-dim);
-    background: #ffffff;
+    background: var(--bg-surface);
     border: 1px solid var(--border-color);
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  .filter-chip:hover { border-color: var(--crunchy-orange); color: var(--crunchy-orange); }
+  .filter-chip:hover { border-color: var(--crunchy-orange); color: var(--text-main); }
   .filter-chip.active {
     background: var(--crunchy-orange);
     border-color: var(--crunchy-orange);
     color: #ffffff;
+    box-shadow: 0 4px 12px var(--crunchy-orange-glow);
   }
 
-  /* ---------- MAIN FRANCHISE GROUPS ---------- */
+  /* ---------- MAIN CATALOG LAYOUT ---------- */
   main {
-    max-width: 1120px;
+    max-width: 1140px;
     margin: 0 auto;
-    padding: 0 20px 80px;
+    padding: 0 20px 100px;
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 44px;
   }
   .franchise { display: none; }
   .franchise.visible { display: block; }
@@ -147,13 +218,13 @@
     display: flex;
     align-items: baseline;
     gap: 14px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     border-bottom: 2px solid var(--border-color);
-    padding-bottom: 8px;
+    padding-bottom: 10px;
   }
   .franchise-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
+    font-size: 2rem;
     letter-spacing: 0.02em;
     color: var(--text-main);
   }
@@ -164,36 +235,36 @@
 
   .season-row {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 18px;
   }
 
-  /* ---------- CRUNCHYROLL LITE CARD ---------- */
+  /* ---------- PREMIUM ANIME CARD ---------- */
   .card {
     display: flex;
-    background: var(--bg-card);
+    background: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
     position: relative;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: all 0.25s ease;
   }
   .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
     border-color: var(--crunchy-orange);
+    background: var(--bg-surface-hover);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
   }
-  .card:hover .card-thumb img { transform: scale(1.04); }
+  .card:hover .card-thumb img { transform: scale(1.05); }
 
   .card-thumb {
-    flex: 0 0 100px;
-    width: 100px;
+    flex: 0 0 105px;
+    width: 105px;
     position: relative;
     overflow: hidden;
-    background: #e5e7eb;
+    background: #11161d;
   }
   .card-thumb img {
     width: 100%; height: 100%;
@@ -204,17 +275,17 @@
   .thumb-fallback {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
-    color: var(--crunchy-orange); opacity: 0.5;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+    color: var(--crunchy-orange); opacity: 0.4;
   }
 
   .card-body {
     flex: 1;
-    padding: 12px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
+    gap: 6px;
     min-width: 0;
   }
   .card-season {
@@ -222,22 +293,23 @@
     text-transform: uppercase;
     color: var(--crunchy-orange);
     font-weight: 700;
+    letter-spacing: 0.05em;
   }
   .card-title {
-    font-weight: 700;
-    font-size: 0.95rem;
-    line-height: 1.3;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.35;
     color: var(--text-main);
   }
   .card-foot {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     margin-top: 2px;
   }
   .card-rating {
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--gold);
   }
   .card-ep {
@@ -247,27 +319,37 @@
 
   footer {
     text-align: center;
-    padding: 30px 24px;
+    padding: 40px 24px;
     color: var(--text-dim);
     font-size: 0.8rem;
     border-top: 1px solid var(--border-color);
-    background: #ffffff;
-    line-height: 1.6;
+    background: var(--bg-surface);
+    line-height: 1.7;
   }
   footer strong { color: var(--text-main); }
 
   @media (max-width:480px){
-    .stat-strip { gap: 15px; }
-    .card-thumb { flex: 0 0 85px; width: 85px; }
+    .stat-strip { gap: 20px; }
+    .card-thumb { flex: 0 0 90px; width: 90px; }
+    main { padding-bottom: 60px; }
   }
 </style>
 </head>
 <body>
 
 <div class="nav-bar">
-  <a href="#" class="nav-link">About Us</a>
-  <a href="#" class="nav-link">DMCA</a>
-  <a href="#" class="nav-link">Request Anime</a>
+  <div class="menu-container">
+    <button class="three-dots-btn" id="menuBtn" aria-label="Open menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <a href="#" class="dropdown-link">About Us</a>
+      <a href="#" class="dropdown-link">Request Anime</a>
+      <a href="#" class="dropdown-link">DMCA</a>
+    </div>
+  </div>
 </div>
 
 <header>
@@ -292,6 +374,20 @@
 
 <script src="data.js"></script>
 <script>
+  // Dropdown Toggle Logic
+  const menuBtn = document.getElementById('menuBtn');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle('show');
+  });
+
+  document.addEventListener('click', () => {
+    dropdownMenu.classList.remove('show');
+  });
+
+  // Structural Processing
   const groups = {};
   const displayTitle = {};
   
@@ -354,7 +450,7 @@
     list.appendChild(block);
   });
 
-  // Dual Filtering: Search Bar + Genre Chips logic
+  // Live Search + Filter System
   const searchBar = document.getElementById('searchBar');
   
   function filterAnime() {
@@ -366,8 +462,6 @@
       const titleMatches = f.dataset.title.includes(query);
       const genreData = f.dataset.genres.split(',');
       const genreMatches = selectedGenre === 'all' || genreData.includes(selectedGenre);
-      
-      // Secondary logic to search across genres via text field too
       const genreSearchMatches = genreData.some(g => g.includes(query));
 
       if ((titleMatches || genreSearchMatches) && genreMatches) {
